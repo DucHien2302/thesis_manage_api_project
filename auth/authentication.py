@@ -3,6 +3,8 @@ import os
 from datetime import datetime, timedelta
 import jwt
 from typing import Optional
+
+from sqlalchemy import select
 from models.model import SysFunction, SysRoleFunction, SysUserRole
 from sqlalchemy.orm import Session
 load_dotenv()
@@ -17,13 +19,12 @@ if not ALGORITHM:
     raise ValueError("ALGORITHM must be set in enviroment variables")
 
 def get_user_functions(db: Session, user_id: str) -> list[str]:
-    role_ids = db.query(SysUserRole.role_id).filter(SysUserRole.user_id == user_id).subquery()
-
+    role_ids_select = select(SysUserRole.role_id).filter(SysUserRole.user_id == user_id)
     function_paths = (
         db.query(SysFunction.path)
         .join(SysRoleFunction, SysFunction.id == SysRoleFunction.function_id)
         .filter(
-            SysRoleFunction.role_id.in_(role_ids),
+            SysRoleFunction.role_id.in_(role_ids_select),
             SysFunction.parent_id == None,
             SysFunction.status == 1,
             SysRoleFunction.status == 1

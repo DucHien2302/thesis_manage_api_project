@@ -157,7 +157,9 @@ class Thesis(Base):
     #  1: Chua co nguoi dang ki . 2 Da co nguoi dang ki. 
     batch_id = Column(UUID, nullable=False, index=True)
     major_id = Column(UUID, nullable=False, index=True)
+    department_id = Column(Integer, ForeignKey("department.id"), nullable=True)
     reason = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
 
 
 class ThesisLecturer(Base):

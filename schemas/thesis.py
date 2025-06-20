@@ -12,9 +12,12 @@ class ThesisBase(BaseModel):
     status:  int
     batch_id: UUID
     major_id: UUID
+    department_id: Optional[int] = None
+    notes: Optional[str] = None
 
 class ThesisCreate(ThesisBase):
-    lecturer_ids: List[UUID]  # ✅ Danh sách ID giảng viên
+    instructor_ids: List[UUID]
+    reviewer_ids: Optional[List[UUID]] = []
 
 class ThesisUpdate(BaseModel):
     title:  Optional[str] = None
@@ -64,23 +67,6 @@ class BatchResponse(BaseModel):
     class Config:
         orm_mode = True
 
-class ThesisResponse(BaseModel):
-    id: UUID
-    thesis_type: int
-    status: str
-    name: str
-    description: str
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    instructors: List[InstructorResponse]
-    batch: BatchResponse  # Trả ra cả đợt, kỳ, năm học
-    major: str
-    reason: Optional[str]
-    name_thesis_type: str
-
-    class Config:
-        orm_mode = True
-
 class MajorResponse(BaseModel):
     id: UUID
     name: str
@@ -109,6 +95,26 @@ class BatchSimpleResponse(BaseModel):
     name: str
     start_date: datetime
     end_date: datetime
+
+    class Config:
+        orm_mode = True
+
+class ThesisResponse(BaseModel):
+    id: UUID
+    thesis_type: int
+    status: str
+    name: str
+    description: str
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
+    instructors: List[InstructorResponse]
+    reviewers: List[InstructorResponse] = []
+    batch: BatchResponse
+    major: str
+    department: Optional[DepartmentResponse] = None 
+    reason: Optional[str]
+    name_thesis_type: str
+    notes: Optional[str]
 
     class Config:
         orm_mode = True
